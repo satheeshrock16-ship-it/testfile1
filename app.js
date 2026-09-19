@@ -30,9 +30,18 @@ async function loadRoom(id){
 async function refresh(){
  const [{data:p,error:pe},{data:m,error:me}]=await Promise.all([
   supabase.from("profiles").select("id,name,calorie_target,room_id").eq("room_id",roomId),
-  supabase.from("meals").select("id,user_id,meal_type,food,calories,protein,carbs,fat,eaten_on,created_at,profiles(name)").eq("room_id",roomId).eq("eaten_on",day)
+  supabase.from("meals").select("id,user_id,meal_type,food,calories,protein,carbs,fat,eaten_on,created_at").eq("room_id",roomId).eq("eaten_on",day)
  ]);
- if(pe)throw pe;if(me)throw me;people=p||[];meals=m||[];render();
+ if(pe)throw pe;if(me)throw me;
+ people=p||[];meals=m||[];
+ if(meals.length){
+   const ids=[...new Set(meals.map(x=>x.user_id))];
+   const {data:memberProfiles,error:profileError}=await supabase.from("profiles").select("id,name").in("id",ids);
+   if(profileError)throw profileError;
+   const names=new Map((memberProfiles||[]).map(x=>[x.id,x.name]));
+   meals=meals.map(m=>({...m,profiles:{name:names.get(m.user_id)||"Member"}}));
+ }
+ render();
 }
 function subscribe(){
  peopleChannel?.unsubscribe();mealChannel?.unsubscribe();
