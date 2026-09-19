@@ -175,7 +175,9 @@ function updateNutritionFields(){const n=nutritionForFood();calInput.value=n.cal
 function applyFoodPreset(){updateQuantityMode()}
 const foodList=$("indianFoodList");if(foodList)foodList.innerHTML=Object.entries(indianFoods).map(([name,kcal])=>`<option value="${name}">${kcal} kcal</option>`).join("");
 foodInput?.addEventListener("change",applyFoodPreset);
-foodInput?.addEventListener("input",()=>{if(indianFoods[foodInput.value]!=null)updateQuantityMode()});\nqtyInput?.addEventListener("input",updateNutritionFields);\ngramsInput?.addEventListener("input",updateNutritionFields);
+foodInput?.addEventListener("input",()=>{if(indianFoods[foodInput.value]!=null)updateQuantityMode()});
+qtyInput?.addEventListener("input",updateNutritionFields);
+gramsInput?.addEventListener("input",updateNutritionFields);
 
 function key(d){return new Date(d.getFullYear(),d.getMonth(),d.getDate()).toISOString().slice(0,10)}
 function safe(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
