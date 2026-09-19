@@ -2,6 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SUPABASE_URL="https://lpqdnmaaykeyklfdfzdl.supabase.co";
 const SUPABASE_KEY="sb_publishable_MpTMTeTLJ74A5gm8QHs2kA_Z0aETuMX";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
+const AUTH_REDIRECT_URL=(location.hostname==="localhost"||location.hostname==="127.0.0.1")?"https://dietduo.vercel.app":location.origin;
 const $=id=>document.getElementById(id),fmt=n=>Number(n||0).toLocaleString("en-IN",{maximumFractionDigits:0});
 let day=key(new Date()),user=null,roomId=null,room=null,people=[],meals=[],peopleChannel,mealChannel,authMode="signin";
 const indianFoods={
@@ -247,7 +248,7 @@ async function loadUser(){
  $("createName").value=p?.name||"";$("joinName").value=p?.name||"";show("roomView");
 }
 document.querySelectorAll("[data-auth-tab]").forEach(b=>b.onclick=()=>{authMode=b.dataset.authTab;document.querySelectorAll("[data-auth-tab]").forEach(x=>x.classList.toggle("active",x===b));$("authNameLabel").classList.toggle("hidden",authMode!=="signup");$("authSubmit").textContent=authMode==="signup"?"Create account":"Sign in"});
-$("authForm").onsubmit=async e=>{e.preventDefault();const email=$("authEmail").value.trim(),password=$("authPassword").value;status("authStatus","Signing in…");const r=authMode==="signup"?await supabase.auth.signUp({email,password,options:{data:{name:$("authName").value.trim()||"User"},emailRedirectTo:location.origin}}):await supabase.auth.signInWithPassword({email,password});if(r.error){status("authStatus",r.error.message,true);return}if(r.data.session){user=r.data.user;await loadUser();return}if(authMode==="signup"){status("authStatus","Account created. Check your email and click the confirmation link, then sign in.")}else{status("authStatus","No active session. Please confirm your email first, then sign in.",true)}};
+$("authForm").onsubmit=async e=>{e.preventDefault();const email=$("authEmail").value.trim(),password=$("authPassword").value;status("authStatus","Signing in…");const r=authMode==="signup"?await supabase.auth.signUp({email,password,options:{data:{name:$("authName").value.trim()||"User"},emailRedirectTo:AUTH_REDIRECT_URL}}):await supabase.auth.signInWithPassword({email,password});if(r.error){status("authStatus",r.error.message,true);return}if(r.data.session){user=r.data.user;await loadUser();return}if(authMode==="signup"){status("authStatus","Account created. Check your email and click the confirmation link, then sign in.")}else{status("authStatus","No active session. Please confirm your email first, then sign in.",true)}};
 $("createRoomForm").onsubmit=async e=>{e.preventDefault();try{await createRoom()}catch(x){status("roomStatus",x.message,true)}};
 $("joinRoomForm").onsubmit=async e=>{e.preventDefault();try{await joinRoom()}catch(x){status("roomStatus",x.message,true)}};
 async function logout(){peopleChannel?.unsubscribe();mealChannel?.unsubscribe();localStorage.removeItem("calorieDuoRoom");await supabase.auth.signOut();show("authView")}
