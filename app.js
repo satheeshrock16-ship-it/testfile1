@@ -186,7 +186,8 @@ function icon(t){return({Breakfast:"☀️",Lunch:"🍛",Snack:"🍎",Dinner:"�
 function status(id,msg,bad=false){$(id).textContent=msg;$(id).classList.toggle("error",bad)}
 function show(v){["authView","roomView","appView"].forEach(x=>$(x).classList.toggle("hidden",x!==v))}
 function dateText(k){return k===key(new Date())?"Today":new Date(k+"T00:00:00").toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"})}
-function totals(uid){return meals.filter(m=>m.eaten_on===day&&(!uid||m.user_id===uid)).reduce((a,m)=>a+(Number(m.calories)||0),0)}\nfunction macroTotals(uid){return meals.filter(m=>m.eaten_on===day&&(!uid||m.user_id===uid)).reduce((a,m)=>({protein:a.protein+Number(m.protein||0),carbs:a.carbs+Number(m.carbs||0),fat:a.fat+Number(m.fat||0)}),{protein:0,carbs:0,fat:0})}
+function totals(uid){return meals.filter(m=>m.eaten_on===day&&(!uid||m.user_id===uid)).reduce((a,m)=>a+(Number(m.calories)||0),0)} 
+function macroTotals(uid){return meals.filter(m=>m.eaten_on===day&&(!uid||m.user_id===uid)).reduce((a,m)=>({protein:a.protein+Number(m.protein||0),carbs:a.carbs+Number(m.carbs||0),fat:a.fat+Number(m.fat||0)}),{protein:0,carbs:0,fat:0})}
 function render(){
  $("date").textContent=dateText(day);const ps=[...people].sort((a,b)=>String(a.id).localeCompare(String(b.id)));renderPerson("p1",ps[0]);renderPerson("p2",ps[1]);
  const today=meals.filter(m=>m.eaten_on===day).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
