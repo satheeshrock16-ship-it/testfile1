@@ -9,6 +9,7 @@ const indianFoods={
 };
 const foodInput=$("food"),calInput=$("cal");
 function applyFoodPreset(){const v=foodInput.value;if(indianFoods[v]!=null)calInput.value=indianFoods[v]}
+const foodList=$("indianFoodList");if(foodList)foodList.innerHTML=Object.entries(indianFoods).map(([name,kcal])=>`<option value="${name}">${kcal} kcal</option>`).join("");
 foodInput?.addEventListener("change",applyFoodPreset);
 foodInput?.addEventListener("input",()=>{if(indianFoods[foodInput.value]!=null)calInput.value=indianFoods[foodInput.value]});
 
